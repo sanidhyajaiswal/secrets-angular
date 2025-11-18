@@ -1,10 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const Comment = require("../models/comment");
-const checkAuth = require("../middleware/check-auth");
+import { Router } from "express";
+const router = Router();
+import Comment, { findOne, updateOne, deleteOne } from "../models/comment";
+import checkAuth from "../middleware/check-auth";
 
 router.get("/:id",  checkAuth, (req, res) => {
-    Comment.findOne({story_id: req.params.id}).then((comment) => {
+    findOne({story_id: req.params.id}).then((comment) => {
         if(comment){
             res.status(200).json(comment);
         } else {
@@ -26,7 +26,7 @@ router.post("",  checkAuth, (req,res) => {
 
 router.patch("/:id",  checkAuth, (req,res) => {
     const newComment = req.body.comment;
-    Comment.updateOne(
+    updateOne(
         {story_id: req.params.id},
         { $push: {cmnts: newComment}, $inc: { cmnt_cnt: 1 } }
     ).then((result) => {
@@ -37,9 +37,9 @@ router.patch("/:id",  checkAuth, (req,res) => {
 router.delete("",  checkAuth, (req, res) => {
     const id = req.body._id;
     console.log(id);
-    Comment.deleteOne({story_id: id}).then((result) => {
+    deleteOne({story_id: id}).then((result) => {
         res.status(200).json({message: "Comment Array Deleted!!"});
     });
 });
 
-module.exports = router;
+export default router;

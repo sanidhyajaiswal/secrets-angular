@@ -12,7 +12,7 @@
                 <h3><a [routerLink]="['/posts', post._id]">{{post.title}}</a></h3>
                 <hr>
                 <p>{{post.content.substring(0,650)}}
-                    <a [routerLink]="['/posts', post._id]">Read More</a>
+                    <a *ngIf="post.content.length > 650" [routerLink]="['/posts', post._id]">Read More</a>
                 </p>
                 <div class="vote-btn">
                     <button class="up-btn" type="button" (click)="onUpvote(post)"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg></button>

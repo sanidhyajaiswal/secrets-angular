@@ -1,11 +1,11 @@
-const express = require("express");
-const router = express.Router();
-const Post = require("../models/post");
-const checkAuth = require("../middleware/check-auth");
+import { Router } from "express";
+const router = Router();
+import Post, { find, findById, updateOne, deleteOne } from "../models/post";
+import checkAuth from "../middleware/check-auth";
 var ObjectId = require('mongoose').Types.ObjectId;
 
 router.get("", checkAuth, (req,res) => {
-    Post.find().then((documents) => {
+    find().then((documents) => {
         res.status(200).json({message: "Successful", posts: documents})
     });
 });
@@ -20,7 +20,7 @@ router.get("/:id",  checkAuth, (req, res) => {
         res.status(404).json({message: "Post Not Found"});
         return;
     }
-    Post.findById(newId).then((post) => {
+    findById(newId).then((post) => {
         if(post) {
             res.status(200).json(post);
         } else {
@@ -51,7 +51,7 @@ router.put("/:id",  checkAuth, (req, res) => {
         likes: req.body.likes,
         user_id: req.body.user_id
     });;  
-    Post.updateOne({_id: req.params.id, user_id: req.userData.userId}, post).then((result) => {
+    updateOne({_id: req.params.id, user_id: req.userData.userId}, post).then((result) => {
         if (result.modifiedCount > 0) {
             res.status(200).json({message: "Post updated! "});
         } else {
@@ -64,7 +64,7 @@ router.put("/:id",  checkAuth, (req, res) => {
 
 router.patch("/:id",  checkAuth, (req, res) => {
     const newLike = req.body.likes;
-    Post.updateOne({_id: req.params.id}, [
+    updateOne({_id: req.params.id}, [
         { $set: { likes: newLike} },
     ]).then((result) => {
         res.status(200).json({message: "Updated!!"});
@@ -73,7 +73,7 @@ router.patch("/:id",  checkAuth, (req, res) => {
 
 router.delete("",  checkAuth, (req, res) => {
     const id = req.body._id;
-    Post.deleteOne({_id: id, user_id: req.userData.userId}).then((result) => {
+    deleteOne({_id: id, user_id: req.userData.userId}).then((result) => {
         console.log(result);
         if (result.deletedCount > 0) {
             res.status(200).json({message:  "Post Deleted"});
@@ -83,4 +83,4 @@ router.delete("",  checkAuth, (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;

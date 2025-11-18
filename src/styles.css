@@ -327,7 +327,6 @@
   .post-container {
     display: inline-block;
     width: 70%;
-    max-height: 500px;  
     border-radius: 3px;
     background-color: #252527;
     box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;

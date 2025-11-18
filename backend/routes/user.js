@@ -1,14 +1,14 @@
-const express = require("express");
-const User = require("../models/user");
-const router = express.Router();
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const Post = require("../models/post");
-const checkAuth = require("../middleware/check-auth");
+import { Router } from "express";
+import User, { findOne } from "../models/user";
+const router = Router();
+import { hash as _hash, compare } from "bcrypt";
+import { sign } from "jsonwebtoken";
+import { find } from "../models/post";
+import checkAuth from "../middleware/check-auth";
 
 
 router.post("/signup", (req,res) => {
-    bcrypt.hash(req.body.password, 10).then(hash => {
+    _hash(req.body.password, 10).then(hash => {
         const user = new User({
             email: req.body.email,
             username: req.body.username,
@@ -31,7 +31,7 @@ router.post("/signup", (req,res) => {
 
 router.post("/login", (req,res,next) => {
     let fetchedUser;
-    User.findOne({username: req.body.username})
+    findOne({username: req.body.username})
     .then(user => {
         if (!user){
             return res.status(401).json({
@@ -39,7 +39,7 @@ router.post("/login", (req,res,next) => {
             });
         }
         fetchedUser = user;
-        return bcrypt.compare(req.body.password, user.password);
+        return compare(req.body.password, user.password);
     })
     .then(result => {
         if (!result) {
@@ -47,7 +47,7 @@ router.post("/login", (req,res,next) => {
                 message: "Auth Failed"
             });
         }
-        const token = jwt.sign({
+        const token = sign({
             username: fetchedUser.username,
             userId: fetchedUser._id}, 
             'this_is_the_hash', 
@@ -63,7 +63,7 @@ router.post("/login", (req,res,next) => {
 
 router.get("/myposts",  checkAuth, (req, res) => {
     console.log(req.userData);
-    Post.find({user_id: req.userData.userId}).then((documents) => {
+    find({user_id: req.userData.userId}).then((documents) => {
         console.log(documents);
         if(documents) {
             res.status(200).json({message: "Successful", posts: documents});
@@ -73,4 +73,4 @@ router.get("/myposts",  checkAuth, (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;

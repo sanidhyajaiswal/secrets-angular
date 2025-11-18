@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const Contact = require("../models/contact");
+import { Router } from "express";
+const router = Router();
+import Contact from "../models/contact";
 
 router.post("", (req,res) => {
     const contact = new Contact({
@@ -13,4 +13,4 @@ router.post("", (req,res) => {
     res.status(200).json({message: "Query Added!!"});
 });
 
-module.exports = router;
+export default router;
